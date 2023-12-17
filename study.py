@@ -24,7 +24,9 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/ubuntu/myapp/mydatabase.db'  # 예시 URI, 실제 경로 설정 필요
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
+
 db = SQLAlchemy(app)
 
 class StudentScore(db.Model):

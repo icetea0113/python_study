@@ -40,6 +40,10 @@ class StudentScore(db.Model):
 def initialize_database():
     db.create_all()
 
+@login_manager.user_loader
+def load_user(user_id):
+    return Admin.query.get(int(user_id))
+
 # 점수 업데이트 로직
 def update_student_score(name, score):
     student_score = StudentScore.query.filter_by(name=name).first()
@@ -54,12 +58,39 @@ def update_student_score(name, score):
 @app.route('/admin/scores')
 @login_required
 def admin_scores():
-    all_scores = StudentScore.query.all()
-    return render_template('admin_scores.html', scores=all_scores)
+    scores = StudentScore.query.all()
+    return render_template_string('''
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Student Scores</title>
+        </head>
+        <body>
+            <h2>Student Scores</h2>
+            <table>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Score</th>
+                </tr>
+                {% for student in scores %}
+                <tr>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.score }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </body>
+        </html>
+    ''')
 
 # 관리자 계정 클래스
-class Admin(UserMixin):
-    id = 1
+class Admin(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+class StudentScore(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), unique=True, nullable=False)
+    score = db.Column(db.Integer, default=0)
 
 # 관리자 인증
 @login_manager.user_loader
@@ -75,15 +106,18 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         if username == '이희근' and password == 'androi3810!':  # 간단한 예시, 실제 사용시 보안 강화 필요
-            login_user(Admin())
+            admin = Admin.query.get(1) or Admin(id=1)
+            db.session.add(admin)
+            db.session.commit()
+            login_user(admin)
             return redirect(url_for('admin_scores'))
-    return '''
+    return render_template_string('''
         <form method="post">
             Username: <input type="text" name="username"><br>
             Password: <input type="password" name="password"><br>
             <input type="submit" value="Login">
         </form>
-    '''
+    ''')
 
 # 관리자 로그아웃 라우트
 @app.route('/logout')

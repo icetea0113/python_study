@@ -99,7 +99,7 @@ def allowed_file(filename):
 
 # Check code length
 def check_code_length(code):
-    return len(code.encode('utf-8'))
+    return len(code)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -295,4 +295,4 @@ def grading_results():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run('0.0.0.0', port=5000, debug=True)

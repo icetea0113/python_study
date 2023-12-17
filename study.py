@@ -51,9 +51,6 @@ def update_student_score(name, score):
 @login_required
 def admin_scores():
     scores = StudentScore.query.all()
-    for student in scores:
-        student.name = student.name.strip()
-        print(student.name, student.score)
     return render_template_string('''
         <!DOCTYPE html>
         <html>
@@ -76,7 +73,7 @@ def admin_scores():
             </table>
         </body>
         </html>
-    ''')
+    ''', scores=scores)
 
 # 최초 실행 시 데이터베이스 테이블 생성
 @app.before_first_request

@@ -35,8 +35,6 @@ class StudentScore(db.Model):
     def __repr__(self):
         return f'<StudentScore {self.name}>'
 
-
-
 @login_manager.user_loader
 def load_user(user_id):
     return Admin.query.get(int(user_id))
@@ -90,9 +88,12 @@ class Admin(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
 class StudentScore(db.Model):
+    __tablename__ = 'student_score'
+    __table_args__ = {'extend_existing': True}
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
-    score = db.Column(db.Integer, default=0)
+    score = db.Column(db.Integer, default=0
 
 # 관리자 인증
 @login_manager.user_loader

@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template_string, redirect, url_for, session
+from flask import Flask, send_from_directory, request, render_template_string, redirect, url_for, session
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 from datetime import datetime
 from werkzeug.utils import secure_filename
@@ -162,6 +162,23 @@ def allowed_file(filename):
 def check_code_length(code):
     return len(code)
 
+@app.route('/download-file')
+def download_file():
+    current_time = datetime.now()
+    
+    # 유효기간 확인
+    if START_TIME <= current_time <= END_TIME:
+        try:
+            # 다운로드할 파일의 경로와 파일명 지정
+            directory = '/path/to/your/files'  # 파일이 위치한 디렉토리
+            filename = 'yourfile.txt'  # 다운로드할 파일명
+            return send_from_directory(directory, filename, as_attachment=True)
+        except Exception as e:
+            return str(e)
+    else:
+        return 'This file is not available for download at this time.'
+    
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     error_message = ''
@@ -198,6 +215,9 @@ def home():
             {% if error_message %}
                 <script>alert("{{ error_message }}");</script>
             {% endif %}
+            <a href="{{ url_for('download_file') }}">
+                <button>Download File</button>
+            </a>
         </body>
         </html>
     ''', error_message=error_message)

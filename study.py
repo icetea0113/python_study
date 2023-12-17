@@ -93,7 +93,7 @@ class StudentScore(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
-    score = db.Column(db.Integer, default=0
+    score = db.Column(db.Integer, default=0)
 
 # 관리자 인증
 @login_manager.user_loader
@@ -128,33 +128,6 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('home'))
-
-@app.route('/admin/scores')
-@login_required
-def admin_scores():
-    return render_template_string('''
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Student Scores</title>
-        </head>
-        <body>
-            <h2>Student Scores</h2>
-            <table>
-                <tr>
-                    <th>Student Name</th>
-                    <th>Score</th>
-                </tr>
-                {% for name, score in student_scores.items() %}
-                <tr>
-                    <td>{{ name }}</td>
-                    <td>{{ score }}</td>
-                </tr>
-                {% endfor %}
-            </table>
-        </body>
-        </html>
-    ''', student_scores=student_scores)
 
 # Ensure the upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)

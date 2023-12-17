@@ -42,6 +42,7 @@ def update_student_score(name, score):
         student_score = StudentScore(name=name, score=score)
         db.session.add(student_score)
     db.session.commit()
+    print(name, score)
 
 # 관리자 페이지에서 점수 보기
 @app.route('/admin/scores')

@@ -166,7 +166,7 @@ def home():
             <script>
                 function validateForm() {
                     var name = document.forms["nameForm"]["username"].value;
-                    if (!["이상헌", "양동헌", "조철민", "김장우", "서지민"].includes(name)) {
+                    if (!["superuser_test", "이상헌", "양동헌", "조철민", "김장우", "서지민"].includes(name)) {
                         alert("Invalid name. Please enter a valid name.");
                         return false;
                     }

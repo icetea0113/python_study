@@ -5,11 +5,12 @@ from werkzeug.utils import secure_filename
 import os
 import subprocess
 from subprocess import TimeoutExpired
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Set a secret key for securely signing the session
+app.secret_key = 'dawqlkebfawlhj_1o9i823t78dACFNAWIDB_sdekfjbik'  # Set a secret key for securely signing the session
 
-ALLOWED_NAMES = ['이상헌', '양동헌', '조철민', '김장우', '서지민']
+ALLOWED_NAMES = ['superuser_test', '이상헌', '양동헌', '조철민', '김장우', '서지민']
 START_TIME = datetime(2023, 12, 16, 12, 0)  # Submission start time
 END_TIME = datetime(2023, 12, 22, 23, 59)   # Submission end time
 student_scores = {name: 0 for name in ALLOWED_NAMES}
@@ -22,6 +23,39 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/ubuntu/myapp/mydatabase.db'  # 예시 URI, 실제 경로 설정 필요
+db = SQLAlchemy(app)
+
+class StudentScore(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), unique=True, nullable=False)
+    score = db.Column(db.Integer, default=0)
+
+    def __repr__(self):
+        return f'<StudentScore {self.name}>'
+
+# 최초 실행 시 데이터베이스 테이블 생성
+@app.before_first_request
+def initialize_database():
+    db.create_all()
+
+# 점수 업데이트 로직
+def update_student_score(name, score):
+    student_score = StudentScore.query.filter_by(name=name).first()
+    if student_score:
+        student_score.score += score
+    else:
+        student_score = StudentScore(name=name, score=score)
+        db.session.add(student_score)
+    db.session.commit()
+
+# 관리자 페이지에서 점수 보기
+@app.route('/admin/scores')
+@login_required
+def admin_scores():
+    all_scores = StudentScore.query.all()
+    return render_template('admin_scores.html', scores=all_scores)
 
 # 관리자 계정 클래스
 class Admin(UserMixin):
@@ -92,7 +126,7 @@ ALLOWED_EXTENSIONS = {'py'}
 
 # Maximum allowed code length
 MAX_CODE_LENGTH = 3000  # 3000 bytes
-MAX_CODE_LENGTH_SER_JI_MIN = 1500  # 1500 bytes for 서지민
+MAX_CODE_LENGTH_SEO_JI_MIN = 1500  # 1500 bytes for 서지민
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -157,11 +191,11 @@ def submit():
         
         # Read the code content
         code_content = file.read()
-
+        file.seek(0)
         # Check code length based on the user
         max_code_length = MAX_CODE_LENGTH
         if username == '서지민':
-            max_code_length = MAX_CODE_LENGTH_SER_JI_MIN
+            max_code_length = MAX_CODE_LENGTH_SEO_JI_MIN
 
         if check_code_length(code_content) > max_code_length:
             return f"Code length exceeds the maximum limit of {max_code_length} bytes"

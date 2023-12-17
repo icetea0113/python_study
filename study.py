@@ -25,7 +25,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database123.db')
 
 db = SQLAlchemy(app)
 
@@ -35,14 +35,16 @@ def load_user(user_id):
 
 # 점수 업데이트 로직
 def update_student_score(name, score):
-    student_score = StudentScore.query.filter_by(name=name).first()
-    if student_score:
-        student_score.score += score
-    else:
-        student_score = StudentScore(name=name, score=score)
-        db.session.add(student_score)
-    db.session.commit()
-    print(name, score)
+    try:
+        student_score = StudentScore.query.filter_by(name=name).first()
+        if student_score:
+            student_score.score = score
+        else:
+            new_score = StudentScore(name=name, score=score)
+            db.session.add(new_score)
+        db.session.commit()
+    except Exception as e:
+        print(f"Error updating score: {e}")
 
 # 관리자 페이지에서 점수 보기
 @app.route('/admin/scores')

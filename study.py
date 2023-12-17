@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.secret_key = 'dawqlkebfawlhj_1o9i823t78dACFNAWIDB_sdekfjbik'  # Set a secret key for securely signing the session
 
 ALLOWED_NAMES = ['superuser_test', '이상헌', '양동헌', '조철민', '김장우', '서지민']
-START_TIME = datetime(2023, 12, 16, 12, 0)  # Submission start time
+START_TIME = datetime(2023, 12, 22, 12, 0)  # Submission start time
 END_TIME = datetime(2023, 12, 22, 23, 59)   # Submission end time
 student_scores = {name: 0 for name in ALLOWED_NAMES}
 

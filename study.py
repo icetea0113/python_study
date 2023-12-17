@@ -29,14 +29,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'da
 
 db = SQLAlchemy(app)
 
-class StudentScore(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
-    score = db.Column(db.Integer, default=0)
-
-    def __repr__(self):
-        return f'<StudentScore {self.name}>'
-
 @login_manager.user_loader
 def load_user(user_id):
     return Admin.query.get(int(user_id))

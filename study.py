@@ -169,9 +169,10 @@ def download_file():
     # 유효기간 확인
     if START_TIME <= current_time <= END_TIME:
         try:
-            # 다운로드할 파일의 경로와 파일명 지정
-            directory = '/path/to/your/files'  # 파일이 위치한 디렉토리
-            filename = 'yourfile.txt'  # 다운로드할 파일명
+            # 파일이 위치한 디렉토리
+            directory = os.path.abspath(os.path.dirname(__file__))
+            # 다운로드할 파일명
+            filename = 'ALCO_02_-_Palindrome_1b.hwp'
             return send_from_directory(directory, filename, as_attachment=True)
         except Exception as e:
             return str(e)

@@ -51,6 +51,9 @@ def update_student_score(name, score):
 @login_required
 def admin_scores():
     scores = StudentScore.query.all()
+    for student in scores:
+        student.name = student.name.strip()
+        print(student.name, student.score)
     return render_template_string('''
         <!DOCTYPE html>
         <html>

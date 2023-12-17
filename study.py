@@ -300,6 +300,8 @@ def grading_results():
                 'time': execution_time_str,
                 'score': score
             })
+    username = session['username']  # 현재 세션의 사용자 이름
+    update_student_score(username, total_score)  # 총점 업데이트 함수 호출
 
     # 채점 결과를 표시하는 페이지 렌더링
     return render_template_string('''

@@ -35,10 +35,7 @@ class StudentScore(db.Model):
     def __repr__(self):
         return f'<StudentScore {self.name}>'
 
-# 최초 실행 시 데이터베이스 테이블 생성
-@app.before_first_request
-def initialize_database():
-    db.create_all()
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -82,6 +79,11 @@ def admin_scores():
         </body>
         </html>
     ''')
+
+# 최초 실행 시 데이터베이스 테이블 생성
+@app.before_first_request
+def initialize_database():
+    db.create_all()
 
 # 관리자 계정 클래스
 class Admin(UserMixin, db.Model):

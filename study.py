@@ -3,6 +3,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from datetime import datetime
 from werkzeug.utils import secure_filename
 import os
+import logging
 import subprocess
 from subprocess import TimeoutExpired
 from flask_sqlalchemy import SQLAlchemy
@@ -14,6 +15,18 @@ ALLOWED_NAMES = ['superuser_test', '이상헌', '양동헌', '조철민', '김�
 START_TIME = datetime(2023, 12, 22, 12, 0)  # Submission start time
 END_TIME = datetime(2023, 12, 22, 23, 59)   # Submission end time
 student_scores = {name: 0 for name in ALLOWED_NAMES}
+
+# 로그 레벨 설정 (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+logging.basicConfig(level=logging.DEBUG)
+
+# 파일로 로그 기록 설정
+file_handler = logging.FileHandler('app.log')
+file_handler.setLevel(logging.WARNING)  # WARNING 이상의 로그를 파일에 기록
+app.logger.addHandler(file_handler)
+
+# 로그 포맷 설정
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
 
 # Set the path for the uploaded files
 UPLOAD_FOLDER = 'uploads'
